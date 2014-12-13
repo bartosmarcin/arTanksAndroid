@@ -6,6 +6,7 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 import android.graphics.PixelFormat;
@@ -59,12 +60,34 @@ public class AndroidLauncher extends AndroidApplication implements CvCameraViewL
 		return inputFrame.rgba();
 	}
 
+	Mat cameraMat;
+	
+	/*
+	 * Some default values to avoid calibration
+	 * may be changed in the future
+	 */
+	private void initCameraMat(){
+		double f = 1f;
+		cameraMat = Mat.zeros(3,3,CvType.CV_32FC1);
+		cameraMat.put(0, 0, f);
+		cameraMat.put(1, 1, f);
+		
+		//Jesli f != 1 zmienic !
+		cameraMat.put(2, 2, 1f);
+		
+		cameraMat.put(0, 2, 0.5 * 800.0);
+		cameraMat.put(1, 2, 0.5 * 400.0);
+		
+		
+	}	
+
 	private CameraBridgeViewBase mOpenCvCameraView;
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 		@Override
 		public void onManagerConnected(int status) {
 			switch (status) {
 			case LoaderCallbackInterface.SUCCESS: {
+				initCameraMat();
 				mOpenCvCameraView.enableView();
 			}
 				break;
