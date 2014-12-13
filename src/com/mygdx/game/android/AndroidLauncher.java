@@ -8,6 +8,8 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.samples.imagemanipulations.Marker;
+import org.opencv.samples.imagemanipulations.MarkerDetector;
 
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -56,8 +58,13 @@ public class AndroidLauncher extends AndroidApplication implements CvCameraViewL
 		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, mLoaderCallback);
 	}
 
+	
+	private MarkerDetector detector;
+	private Marker marker;
+	private Mat rgba;
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-		return inputFrame.rgba();
+		rgba =  inputFrame.rgba();
+		return rgba;
 	}
 
 	Mat cameraMat;
@@ -88,6 +95,7 @@ public class AndroidLauncher extends AndroidApplication implements CvCameraViewL
 			switch (status) {
 			case LoaderCallbackInterface.SUCCESS: {
 				initCameraMat();
+				detector = new MarkerDetector();
 				mOpenCvCameraView.enableView();
 			}
 				break;
