@@ -36,29 +36,7 @@ public class AndroidLauncher extends AndroidApplication implements CvCameraViewL
 
 		FrameLayout layout = (FrameLayout) findViewById(R.id.frame_layout);
 		layout.addView(glView);
-		// getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-		// FrameLayout layout = new FrameLayout(this);
-		// View cvView = new JavaCameraView(this, 0);
-		// layout.addView(cvView);
-		// setContentView(layout);
-		// FrameLayout layout = new FrameLayout(this);
-		// setContentView(layout);
-		// initialize(new MyGdxGame(), config);
-		//
-		// try {
-		// requestWindowFeature(Window.FEATURE_NO_TITLE);
-		// } catch (Exception ex) {
-		// log("AndroidApplication",
-		// "Content already displayed, cannot request FEATURE_NO_TITLE", ex);
-		// }
-		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		// getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-
-		// FrameLayout layout = (FrameLayout) findViewById(R.id.frame_layout);
-		// layout.addView(glView);
-
+		
 		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.image_manipulations_activity_surface_view);
 		mOpenCvCameraView.setCvCameraViewListener(this);
 	}
