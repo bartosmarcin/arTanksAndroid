@@ -1,13 +1,18 @@
 package com.mygdx.game.android;
 
+import java.util.List;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -62,6 +67,10 @@ public class AndroidLauncher extends AndroidApplication implements CvCameraViewL
 	private Mat rgba;
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		rgba =  inputFrame.rgba();
+		List<Marker> detectedMarkers = detector.detect(rgba);
+		for(Marker m : detectedMarkers)
+			for(Point p : m.getSortedPoints())
+				Core.circle(rgba, p, 4, new Scalar(255,0,0));
 		return rgba;
 	}
 
