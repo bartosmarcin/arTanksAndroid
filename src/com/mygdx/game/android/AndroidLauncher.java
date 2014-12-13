@@ -8,8 +8,6 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.samples.imagemanipulations.Marker;
-import org.opencv.samples.imagemanipulations.MarkerDetector;
 
 import android.graphics.PixelFormat;
 import android.os.Bundle;
