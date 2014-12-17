@@ -10,22 +10,25 @@ public class Marker {
 	private List<Point> innerBorder;
 	private List<Point> outerBorder;
 	private Point center;
-	
+
 	public Marker(List<Point> innerBorder, List<Point> outerBorder) {
 
-		if(!isClockwise(outerBorder)){
-			Collections.reverse(innerBorder);
-			Collections.reverse(outerBorder);
-		}
-		
 		this.innerBorder = innerBorder;
 		this.outerBorder = outerBorder;
-		
+				
 		center = findCenter();
-		int i = indexOfClosestPoint(innerBorder, center);
+		int i = indexOfClosestPoint(this.innerBorder, center);
 
-		 Collections.rotate(innerBorder,-i);
-		 Collections.rotate(outerBorder,-i);
+		Collections.rotate(this.innerBorder, -i);
+		
+		i = indexOfClosestPoint(outerBorder, innerBorder.get(2));
+		Collections.rotate(outerBorder, -i);
+		
+		if (!isClockwise(this.innerBorder)) {
+			Collections.reverse(this.innerBorder);
+			Collections.reverse(outerBorder);
+		}
+
 	}
 
 	private Point findCenter() {
@@ -40,8 +43,8 @@ public class Marker {
 		y /= outerBorder.size();
 		return new Point(x, y);
 	}
-	
-	public Point getCenter(){
+
+	public Point getCenter() {
 		return center;
 	}
 
@@ -67,7 +70,7 @@ public class Marker {
 
 		Point v1 = new Point(p1.x - p0.x, p1.y - p0.y);
 		Point v2 = new Point(p2.x - p0.x, p2.y - p0.y);
-		//checks if z element of vector product is > 0
+		// checks if z element of vector product is > 0
 		return (v1.x * v2.y) - (v2.x * v1.y) > 0;
 	}
 
@@ -79,7 +82,8 @@ public class Marker {
 
 	public List<Point> getSortedPoints() {
 		List<Point> sorted = new ArrayList<Point>(innerBorder);
-		//sorted.addAll(outerBorder);
+//		List<Point> sorted = new ArrayList<Point>(outerBorder);
+		// sorted.addAll(outerBorder);
 		return sorted;
 	}
 }
