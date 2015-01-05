@@ -1,6 +1,5 @@
 package com.mygdx.game.android;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,17 +8,15 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Size;
-import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
-import android.os.Environment;
-
 public class MarkerDetector {
-	MatOfPoint2f tmpContour;
-	MatOfPoint2f outerCurve;
-	MatOfPoint2f innerCurve;
-	Mat hierarchy;
-	double scaleDown;
+	private MatOfPoint2f tmpContour;
+	private MatOfPoint2f outerCurve;
+	private MatOfPoint2f innerCurve;
+	private Mat hierarchy;
+	private double scaleDown;
+	private Size scaleDownSize;
 	private Mat thrs;
 	
 
@@ -40,8 +37,8 @@ public class MarkerDetector {
 	
 	public Marker detect(Mat rgba) { 
 		Marker marker = null;
-		if(scaleDown != 1)
-			Imgproc.resize(thrs, thrs, );
+//		if(scaleDown != 1)
+//			Imgproc.resize(thrs, thrs, );
 		Imgproc.cvtColor(rgba, thrs, Imgproc.COLOR_RGB2GRAY);
 //		Imgproc.blur(thrs, thrs, new Size(17,17));
 //		Imgproc.medianBlur(thrs, thrs, 17);
