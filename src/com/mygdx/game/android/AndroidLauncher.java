@@ -20,16 +20,16 @@ import org.opencv.core.Point;
 import org.opencv.core.Point3;
 import org.opencv.core.Scalar;
 
+import ARCameraControler.Marker;
 import android.app.ProgressDialog;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.mygdx.game.ILoading;
@@ -43,6 +43,7 @@ public class AndroidLauncher extends AndroidApplication implements CvCameraViewL
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.image_manipulations_surface_view);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		pDialog = ProgressDialog.show(this, "Proszę czekać", "Trwa ładowanie modelu 3D");
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.r = config.g = config.b = config.a = 8;
@@ -58,7 +59,7 @@ public class AndroidLauncher extends AndroidApplication implements CvCameraViewL
 
 			FrameLayout layout = (FrameLayout) findViewById(R.id.frame_layout);
 			layout.addView(glView);
-
+//			onLoadingComplete();
 			mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.image_manipulations_activity_surface_view);
 			mOpenCvCameraView.setCvCameraViewListener(this);
 		} catch (Exception e) {
@@ -88,53 +89,38 @@ public class AndroidLauncher extends AndroidApplication implements CvCameraViewL
 
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		rgba = inputFrame.rgba();
-		List<Marker> detectedMarkers = detector.detect(rgba);
-		if (detectedMarkers.size() == 0) {
+		marker = detector.detect(rgba);
+		if (marker == null) {
 			Scene.setCameraPos(null, null);
 			return rgba;
 		}
-		marker = detectedMarkers.get(0);
 		if (!markerInitialized) {
 			initMarkerPosition(10);
+			trackedPoints = new MatOfPoint2f();
 			markerInitialized = true;
 			tvec = new Mat();
 			rvec = new Mat();
 		}
 
 		estimatePose(marker, rvec, tvec);
+//		Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2GRAY);
+//		Imgproc.medianBlur(rgba, rgba, 17);
+//		Imgproc.threshold(rgba, rgba, 0, 255, Imgproc.THRESH_OTSU);
+//		Imgproc.adaptiveThreshold(rgba, rgba,255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 11, 2);
 
 		return rgba;
 	}
 
+	
+	MatOfPoint2f trackedPoints;
 	private void estimatePose(Marker marker, Mat rvec, Mat tvec) {
 		List<Point> newPoints = marker.getSortedPoints();
-		for (Point p : newPoints)
-			Core.circle(rgba, p, 3, new Scalar(255, 0, 0));
-		MatOfPoint2f newPoint2f = new MatOfPoint2f();
-		newPoint2f.fromList(newPoints);
-		Calib3d.solvePnP(oldPoints3f, newPoint2f, cameraMat, distCooef, rvec, tvec);
-		drawAxes(10, rvec, tvec);
-		// Log.i("TVEC", tvec.dump());
-
+//		for (Point p : newPoints)
+//			Core.circle(rgba, p, 3, new Scalar(255, 0, 0));
+		trackedPoints.fromList(newPoints);
+		Calib3d.solvePnP(oldPoints3f, trackedPoints, cameraMat, distCooef, rvec, tvec);
+//		drawAxes(10, rvec, tvec);
 		Scene.setCameraPos(tvec, rvec);
-		// Scene.getCameraTranslation();
-
-		// Point3[] ar_pts = {new Point3(200,200,0), new Point3(200,300,0), new
-		// Point3(300,200,0), new Point3(200,200,100)};
-		//
-		// MatOfPoint3f ar_verts = new MatOfPoint3f();
-		// MatOfPoint2f projPts = new MatOfPoint2f();
-		// ar_verts.fromArray(ar_pts);
-		// Calib3d.projectPoints(ar_verts, rvec, tvec, cameraMat, K, projPts);
-		// aps = projPts.toArray();
-
-		// }
-		//
-		// if(aps != null){
-		// Core.line(rgba, aps[0], aps[1], new Scalar(0,255,0));
-		// Core.line(rgba, aps[0], aps[2], new Scalar(255,0,0));
-		// Core.line(rgba, aps[0], aps[3], new Scalar(0,0,255));
-		// }
 	}
 
 	private void drawAxes(float size, Mat rvec, Mat tvec) {
